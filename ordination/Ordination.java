@@ -10,7 +10,7 @@ public abstract class Ordination {
     // TODO Link til Laegemiddel
     private Laegemiddel laegemiddel;
 
-    // IT WORKS
+    private Patient patient;
 
     // TODO constructor (med specifikation)
     public Ordination(LocalDate startDen, LocalDate slutDen, Laegemiddel laegemiddel) {
@@ -61,4 +61,14 @@ public abstract class Ordination {
      * @return
      */
     public abstract String getType();
+
+
+    // Patienter
+    public Patient getPatient() {
+        return patient;
+    }
+
+    public void setPatient(Patient patient) {
+        this.patient = patient;
+    }
 }
