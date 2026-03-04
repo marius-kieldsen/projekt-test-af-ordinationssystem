@@ -13,6 +13,11 @@ public abstract class Ordination {
     // IT WORKS
 
     // TODO constructor (med specifikation)
+    public Ordination(LocalDate startDen, LocalDate slutDen, Laegemiddel laegemiddel) {
+        if (slutDen.isBefore(startDen)) {
+            throw new IllegalArgumentException("Startdato må ikke være før slutdato");
+        }
+    }
 
     public LocalDate getStartDen() {
         return startDen;
