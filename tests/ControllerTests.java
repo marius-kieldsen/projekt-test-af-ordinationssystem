@@ -133,7 +133,7 @@ public class ControllerTests {
         assertTrue(exception.getMessage().contains("Patient og lægemiddel må ikke være null"));
     }
 
-    @Test
+//    @Test
 //    public void fast
 
 
