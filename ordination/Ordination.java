@@ -2,7 +2,7 @@ package ordination;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-
+// o
 public abstract class Ordination {
     private LocalDate startDen;
     private LocalDate slutDen;
