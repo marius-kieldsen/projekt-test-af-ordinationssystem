@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-import static jdk.javadoc.internal.doclets.formats.html.markup.HtmlStyle.index;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class DagligFastTest {

@@ -3,10 +3,7 @@ package tests;
 
 import com.sun.source.tree.AssertTree;
 import controller.Controller;
-import ordination.Laegemiddel;
-import ordination.Ordination;
-import ordination.PN;
-import ordination.Patient;
+import ordination.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,6 +17,7 @@ public class ControllerTests {
     private Patient patient;
     private Laegemiddel laegemiddel;
     private PN pn;
+    private DagligFast fast;
     private IllegalArgumentException exception;
 
     @BeforeEach
@@ -39,6 +37,17 @@ public class ControllerTests {
                 laegemiddel,
                 4
         );
+
+        fast = Controller.opretDagligFastOrdination(
+                LocalDate.of(2026,1,01),
+                LocalDate.of(2026,10,01),
+                patient,
+                laegemiddel,
+                1,
+                1,
+                1,
+                1
+        );
     }
 
     @AfterEach
@@ -49,9 +58,8 @@ public class ControllerTests {
         }
     }
 
-    // TESTS
-
-
+    // opretPNOrdination
+    // Gyldige data
     @Test
     public void opretPNOrdination_gyldigInput_returnererPN() {
         assertNotNull(pn);
@@ -59,7 +67,7 @@ public class ControllerTests {
     }
 
     @Test
-    public void PN_TC2_EdgeCasePeriodeOgAntal() {
+    public void opretPNOrdination_nulAntalOgSammeDato_returnererPN() {
         PN edgeCase = Controller.opretPNOrdination(
                 LocalDate.of(2026,1,01),
                 LocalDate.of(2026,1,01),
@@ -70,11 +78,12 @@ public class ControllerTests {
 
         assertNotNull(edgeCase);
         assertTrue(patient.getOrdinationer().contains(edgeCase));
+        assertEquals(0, edgeCase.getAntalEnheder());
     }
 
     // Ugyldige data
     @Test
-    public void PN_TC3_UgyldigAntal() {
+    public void opretPNOrdination_negativAntal_kasterException() {
         exception = assertThrows(IllegalArgumentException.class, () -> {
             Controller.opretPNOrdination(
                 LocalDate.of(2026,1,01),
@@ -89,7 +98,7 @@ public class ControllerTests {
     }
 
     @Test
-    public void PN_TC4_StartDatoEfterSlutDato() {
+    public void opretPNOrdination_startDatoEfterSlutDato_kasterException() {
         exception = assertThrows(IllegalArgumentException.class, () -> {
             Controller.opretPNOrdination(
                 LocalDate.of(2026,11,01),
@@ -104,7 +113,7 @@ public class ControllerTests {
     }
 
     @Test
-    public void PN_TC5_NullPatient() {
+    public void opretPNOrdination_nullPatient_kasterException() {
         exception = assertThrows(IllegalArgumentException.class, () -> {
             Controller.opretPNOrdination(
                     LocalDate.of(2026,1,01),
@@ -119,7 +128,7 @@ public class ControllerTests {
     }
 
     @Test
-    public void PN_TC6_NullLægemiddel() {
+    public void opretPNOrdination_nullLægemiddel_kasterException() {
         exception = assertThrows(IllegalArgumentException.class, () -> {
             Controller.opretPNOrdination(
                     LocalDate.of(2026,1,01),
@@ -133,8 +142,164 @@ public class ControllerTests {
         assertTrue(exception.getMessage().contains("Patient og lægemiddel må ikke være null"));
     }
 
+    // opretDagligFastOrdination
     @Test
-//    public void fast
+    public void opretDagligFastOrdination_gyldigInput_returnererOrdination() {
+        assertNotNull(fast);
+        assertTrue(patient.getOrdinationer().contains(fast));
+    }
+
+    @Test
+    public void opretDagligFastOrdination_nulAntal_returnererOrdination() {
+        DagligFast edgeCase = Controller.opretDagligFastOrdination(
+                LocalDate.of(2026, 1, 1),
+                LocalDate.of(2026, 1, 1),
+                patient,
+                laegemiddel,
+                0,
+                0,
+                0,
+                0
+        );
+
+        assertNotNull(edgeCase);
+        assertTrue(patient.getOrdinationer().contains(edgeCase));
+        assertEquals(0, edgeCase.doegnDosis());
+    }
+
+    // Bare for at verificere, den gør som den skal
+    @Test
+    public void opretDagligFastOrdination_gyldigInput_korrektDoegnDosis() {
+        assertEquals(4, fast.doegnDosis());
+    }
+
+    // Ugyldige data
+    @Test
+    public void opretDagligFastOrdination_startDatoEfterSlutDato_kasterException() {
+        exception = assertThrows(IllegalArgumentException.class, () -> {
+            Controller.opretDagligFastOrdination(
+                    LocalDate.of(2026, 11, 1),
+                    LocalDate.of(2026, 10, 1),
+                    patient,
+                    laegemiddel,
+                    1,
+                    1,
+                    1,
+                    1
+            );
+        });
+
+        assertTrue(exception.getMessage().contains("Slutdato kan ikke være før startdato"));
+    }
+
+    @Test
+    public void opretDagligFastOrdination_nullPatient_kasterException() {
+        exception = assertThrows(IllegalArgumentException.class, () -> {
+            Controller.opretDagligFastOrdination(
+                    LocalDate.of(2026, 1, 1),
+                    LocalDate.of(2026, 10, 1),
+                    null,
+                    laegemiddel,
+                    1,
+                    1,
+                    1,
+                    1
+            );
+        });
+
+        assertTrue(exception.getMessage().contains("Patient og lægemiddel må ikke være null"));
+    }
+
+    @Test
+    public void opretDagligFastOrdination_nullLægemiddel_kasterException() {
+        exception = assertThrows(IllegalArgumentException.class, () -> {
+            Controller.opretDagligFastOrdination(
+                    LocalDate.of(2026, 1, 1),
+                    LocalDate.of(2026, 10, 1),
+                    patient,
+                    null,
+                    1,
+                    1,
+                    1,
+                    1
+            );
+        });
+
+        assertTrue(exception.getMessage().contains("Patient og lægemiddel må ikke være null"));
+    }
+
+    @Test
+    public void opretDagligFastOrdination_negativAntal_kasterException() {
+        exception = assertThrows(IllegalArgumentException.class, () -> {
+            Controller.opretDagligFastOrdination(
+                    LocalDate.of(2026, 1, 1),
+                    LocalDate.of(2026, 10, 1),
+                    patient,
+                    laegemiddel,
+                    -1,
+                    0,
+                    0,
+                    0
+            );
+        });
+
+        assertTrue(exception.getMessage().contains("Antal må ikke være negativ"));
+    }
+
+    @Test
+    public void opretDagligFastOrdination_negativMiddagAntal_kasterException() {
+        exception = assertThrows(IllegalArgumentException.class, () -> {
+            Controller.opretDagligFastOrdination(
+                    LocalDate.of(2026, 1, 1),
+                    LocalDate.of(2026, 10, 1),
+                    patient,
+                    laegemiddel,
+                    0,
+                    -1,
+                    0,
+                    0
+            );
+        });
+
+        assertTrue(exception.getMessage().contains("Antal må ikke være negativ"));
+    }
+
+    @Test
+    public void opretDagligFastOrdination_negativAftenAntal_kasterException() {
+        exception = assertThrows(IllegalArgumentException.class, () -> {
+            Controller.opretDagligFastOrdination(
+                    LocalDate.of(2026, 1, 1),
+                    LocalDate.of(2026, 10, 1),
+                    patient,
+                    laegemiddel,
+                    0,
+                    0,
+                    -1,
+                    0
+            );
+        });
+
+        assertTrue(exception.getMessage().contains("Antal må ikke være negativ"));
+    }
+
+    @Test
+    public void opretDagligFastOrdination_negativNatAntal_kasterException() {
+        exception = assertThrows(IllegalArgumentException.class, () -> {
+            Controller.opretDagligFastOrdination(
+                    LocalDate.of(2026, 1, 1),
+                    LocalDate.of(2026, 10, 1),
+                    patient,
+                    laegemiddel,
+                    0,
+                    0,
+                    0,
+                    -1
+            );
+        });
+
+        assertTrue(exception.getMessage().contains("Antal må ikke være negativ"));
+    }
+
 
 
 
