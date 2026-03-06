@@ -305,7 +305,6 @@ public class DagligFastTest {
         // Sæt kun nogle doser
         dagligFast.setDosis(0, morgen); // Morgen
         dagligFast.setDosis(2, aften);  // Aften
-        // Middag (1) og Nat (3) er null
 
         // Forventet resultat
         assertEquals(3.0, dagligFast.doegnDosis(), 0.0001);
@@ -321,21 +320,10 @@ public class DagligFastTest {
 
         DagligFast dagligFast = new DagligFast(startDato, slutDato, lm);
 
-        // Opret doser med antal
-        Dosis morgen = new Dosis(LocalTime.of(8, 0), 1.0);
-        Dosis middag = new Dosis(LocalTime.of(12, 0), 1.0);
-        Dosis aften = new Dosis(LocalTime.of(18, 0), 1.0);
-        Dosis nat = new Dosis(LocalTime.of(23, 0), 2.0);
-
-        // Sæt doser
-        dagligFast.setDosis(0, morgen);
-        dagligFast.setDosis(1, middag);
-        dagligFast.setDosis(2, aften);
-        dagligFast.setDosis(3, nat);
-
-        // Forventet resultat
-        assertEquals(5.0, dagligFast.doegnDosis(), 0.0001);
+        // Forventet resultat: doegnDosis() = 0.0
+        assertEquals(0.0, dagligFast.doegnDosis(), 0.0001);
     }
+
 
     @Test
     public void TC4_alleDoserEr0() {
@@ -347,6 +335,95 @@ public class DagligFastTest {
         DagligFast dagligFast = new DagligFast(startDato, slutDato, lm);
 
         // Opret doser med antal
+        Dosis morgen = new Dosis(LocalTime.of(8, 0), 0);
+        Dosis middag = new Dosis(LocalTime.of(12, 0), 0);
+        Dosis aften = new Dosis(LocalTime.of(18, 0), 0);
+        Dosis nat = new Dosis(LocalTime.of(23, 0), 0);
+
+        // Sæt doser
+        dagligFast.setDosis(0, morgen);
+        dagligFast.setDosis(1, middag);
+        dagligFast.setDosis(2, aften);
+        dagligFast.setDosis(3, nat);
+
+        // Forventet resultat
+        assertEquals(0, dagligFast.doegnDosis(), 0.0001);
+    }
+
+    // DagligFast public double samletDosis()
+    @Test
+    public void TC1_alleDoserSat() {
+        // Input
+        LocalDate startDato = LocalDate.of(2026, 2, 20);
+        LocalDate slutDato = LocalDate.of(2026, 2, 22);
+        Laegemiddel lm = new Laegemiddel("Panodil", 1.0, 1.0, 1.0, "mg");
+
+        DagligFast dagligFast = new DagligFast(startDato, slutDato, lm);
+
+        // Opret doser med antal
+        Dosis morgen = new Dosis(LocalTime.of(8, 0), 4);
+        Dosis middag = new Dosis(LocalTime.of(12, 0), 4);
+        Dosis aften = new Dosis(LocalTime.of(18, 0), 4);
+        Dosis nat = new Dosis(LocalTime.of(23, 0), 3);
+
+        // Sæt doser
+        dagligFast.setDosis(0, morgen);
+        dagligFast.setDosis(1, middag);
+        dagligFast.setDosis(2, aften);
+        dagligFast.setDosis(3, nat);
+
+        // Forventet resultat
+        assertEquals(15, dagligFast.doegnDosis(), 0.0001);
+    }
+
+    @Test
+    public void TC2_alleDoserNull() {
+        // Input
+        LocalDate startDato = LocalDate.of(2026, 2, 20);
+        LocalDate slutDato = LocalDate.of(2026, 2, 22);
+        Laegemiddel lm = new Laegemiddel("Panodil", 1.0, 1.0, 1.0, "mg");
+
+        DagligFast dagligFast = new DagligFast(startDato, slutDato, lm);
+
+        // Forventet resultat
+        assertEquals(0.0, dagligFast.samletDosis(), 0.0001);
+    }
+
+    @Test
+    public void TC3_alleDoser0() {
+        // Input
+        LocalDate startDato = LocalDate.of(2026, 2, 20);
+        LocalDate slutDato = LocalDate.of(2026, 2, 22);
+        Laegemiddel lm = new Laegemiddel("Panodil", 1.0, 1.0, 1.0, "mg");
+
+        DagligFast dagligFast = new DagligFast(startDato, slutDato, lm);
+
+        // Opret doser med antal
+        Dosis morgen = new Dosis(LocalTime.of(8, 0), 0);
+        Dosis middag = new Dosis(LocalTime.of(12, 0), 0);
+        Dosis aften = new Dosis(LocalTime.of(18, 0), 0);
+        Dosis nat = new Dosis(LocalTime.of(23, 0), 0);
+
+        // Sæt doser
+        dagligFast.setDosis(0, morgen);
+        dagligFast.setDosis(1, middag);
+        dagligFast.setDosis(2, aften);
+        dagligFast.setDosis(3, nat);
+
+        // Forventet resultat:
+        assertEquals(0.0, dagligFast.samletDosis(), 0.0001);
+    }
+
+    @Test
+    public void TC4_startErLigSlut() {
+        // Input
+        LocalDate startDato = LocalDate.of(2026, 2, 20);
+        LocalDate slutDato = LocalDate.of(2026, 2, 20);
+        Laegemiddel lm = new Laegemiddel("Panodil", 1.0, 1.0, 1.0, "mg");
+
+        DagligFast dagligFast = new DagligFast(startDato, slutDato, lm);
+
+        // Opret doser
         Dosis morgen = new Dosis(LocalTime.of(8, 0), 1.0);
         Dosis middag = new Dosis(LocalTime.of(12, 0), 1.0);
         Dosis aften = new Dosis(LocalTime.of(18, 0), 1.0);
@@ -359,6 +436,6 @@ public class DagligFastTest {
         dagligFast.setDosis(3, nat);
 
         // Forventet resultat
-        assertEquals(5.0, dagligFast.doegnDosis(), 0.0001);
+        assertEquals(5.0, dagligFast.samletDosis(), 0.0001);
     }
 }
