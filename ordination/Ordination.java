@@ -7,12 +7,10 @@ public abstract class Ordination {
     private LocalDate startDen;
     private LocalDate slutDen;
 
-    // TODO Link til Laegemiddel
     private Laegemiddel laegemiddel;
 
     private Patient patient;
 
-    // TODO constructor (med specifikation)
     public Ordination(LocalDate startDen, LocalDate slutDen, Laegemiddel laegemiddel) {
         if (startDen == null || slutDen == null) {
             throw new IllegalArgumentException("Start og slutdato må ikke være null");
